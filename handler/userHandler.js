@@ -78,9 +78,10 @@ exports.login = (req, res) => {
             const token = createToken(test)
             res.send({ code: 200, message: "登录成功", token })
         } catch (error) {
+            // 登录成功返回一个包含账号与密码的token
             return res.send({ code: 500, message: "服务器异常" })
         }
-        // 登录成功返回一个包含账号与密码的token
+        
         
     })
 
