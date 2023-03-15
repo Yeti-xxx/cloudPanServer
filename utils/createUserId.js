@@ -1,5 +1,4 @@
 exports.createId = function(userName){
-    userName = 'yetixx12'
     let userId = ''
     // 遍历userName
     for(let i in userName){

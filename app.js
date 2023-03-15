@@ -4,6 +4,8 @@ const express = require('express')
 const app = express()
 // 导入test路由
 const routerTest = require('./test/index')
+// 导入login.js路由
+const loginRouter = require('./router/login')
 // 导入user.js路由
 const userRouter = require('./router/user')
 // 引入跨域插件
@@ -14,7 +16,8 @@ app.use(cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/test',routerTest)
-app.use('/cloud',userRouter)
+app.use('/cloud',loginRouter)
+app.use('/api',userRouter)
 app.listen(5007, () => {
     console.log('api server running at http://127.0.0.1:5007')
 })

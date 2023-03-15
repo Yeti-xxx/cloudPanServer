@@ -1,9 +1,7 @@
 const express = require('express')
-const router = express.Router()
+const userRouter = express.Router()
 const UserHandler = require('../handler/userHandler')
 
-// 注册功能
-router.post('/regUser',UserHandler.regUser)
-// 登录功能
-router.post('/login',UserHandler.login)
-module.exports = router
+// 获取用户信息
+userRouter.get('/getUserInfo',UserHandler.getUserInfo)
+module.exports = userRouter
