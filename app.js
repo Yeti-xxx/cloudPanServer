@@ -12,9 +12,13 @@ const userRouter = require('./router/user')
 const cors = require('cors'); 
 // 引入body-parser 处理Body
 const bodyParser = require('body-parser')
+// 导入path
+const path = require('path')
 app.use(cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));
+// 托管图片资源
+app.use('/cloudAvatar',express.static('./public/cloudAvatar'))
 app.use('/test',routerTest)
 app.use('/cloud',loginRouter)
 app.use('/api',userRouter)
