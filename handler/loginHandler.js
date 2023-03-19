@@ -7,6 +7,10 @@ const { regPassword, regUserName } = require('../utils/regExp')
 const { createId } = require('../utils/createUserId')
 // 导入token生成
 const { createToken, verifyToken } = require('../utils/createToken')
+// 导入util
+const util = require('util');
+// 将db.query 装饰为Promis的方法
+const query = util.promisify(db.query).bind(db);
 
 // 注册功能
 exports.regUser = (req, res) => {
@@ -55,32 +59,25 @@ exports.regUser = (req, res) => {
 }
 
 // 登录功能
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
     const loginBody = req.body
     const sqlLogin = 'select * from cloud_login where username=?'
-    db.query(sqlLogin, loginBody.username, (err, resSql) => {
-        if (err) {
-            return res.send({ code: 500, message: "服务器异常" })
-        }
+    try {
+        const resSql = await query(sqlLogin, loginBody.username)
         if (resSql.length == 0) {
             return res.send({ code: 403, message: "用户名不存在" })
         }
         const HashPassword = resSql[0].password //获取数据库中的密码
-        const compareRes = bcryptjs.compareSync(loginBody.password, HashPassword)
+        const compareRes = bcryptjs.compareSync(loginBody.password, HashPassword)   //进行加密比较
         if (!compareRes) {
             return res.send({ code: 403, message: '密码错误' })
         }
-        try {
-            const test = Object.assign({}, resSql[0])
-            test.password = loginBody.password
-            const token = createToken(test)
-            res.send({ code: 200, message: "登录成功", token })
-        } catch (error) {
-            // 登录成功返回一个包含账号与密码的token
-            return res.send({ code: 500, message: "服务器异常" })
-        }
-        
-        
-    })
+        const test = Object.assign({}, resSql[0])
+        test.password = loginBody.password
+        const token = createToken(test)
+        res.send({ code: 200, message: "登录成功", token })
+    } catch (error) {
+        return res.send({ code: 500, message: "服务器异常" })
+    }
 
 }

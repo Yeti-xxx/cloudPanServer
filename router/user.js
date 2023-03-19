@@ -11,4 +11,7 @@ userRouter.get('/getUserInfo', UserHandler.getUserInfo)
 // 更新用户头像
 userRouter.post('/updateAvatar', multipartMiddleware, UserHandler.updateAvatar)
 
+// 获取QuickPan头像
+userRouter.get('/quickPanAvatar',UserHandler.getQuickPanAvatar)
+
 module.exports = userRouter
