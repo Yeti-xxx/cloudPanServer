@@ -31,8 +31,8 @@ exports.getUserInfo = async (req, res) => {
 
 // 修改用户头像
 exports.updateAvatar = async (req, res) => {
-    // // // 提取token
     let avtarPath = 'http://127.0.0.1:5007/cloudAvatar/'
+    // 提取token
     const token = req.headers.token
     const user = verifyToken(token);
     // 过期处理
@@ -49,7 +49,7 @@ exports.updateAvatar = async (req, res) => {
         // 删除之前的头像
         const resSql = await query(getPreAvatarSql, [user.userId])
         PreAvatarUrl = resSql[0].avatar + ''
-        if (PreAvatarUrl.indexOf('cube.elemecdn') == -1) {
+        if (PreAvatarUrl.indexOf('cube.elemecdn') == -1 && PreAvatarUrl.indexOf('quicklopjfd') == -1) {
             arr = PreAvatarUrl.split('/').slice(3)
             PreAvatarUrl = `/public/${arr[0]}/${arr[1]}`
             fs.unlink(path.join(process.cwd(), PreAvatarUrl), (err) => {
@@ -71,7 +71,7 @@ exports.updateAvatar = async (req, res) => {
         // // 读取图片
         const img = fs.createReadStream(req.files.file.path)
         const nono = fs.createWriteStream(path.join(process.cwd(), '/public/cloudAvatar/' + fileName))
-        img.pipe(nono)  //这一步就是管道流传输
+        img.pipe(nono)  //管道流传输
     } catch (error) {
         res.send({ code: 500, message: '服务器异常' })
     }
@@ -91,9 +91,23 @@ exports.getQuickPanAvatar = async (req, res) => {
     try {
         const resSql = await query(QPAvatarSql)
         AvatarArr = [...resSql]
-        res.send({ code: 200, message: '成功', data: AvatarArr })
+        return res.send({ code: 200, message: '成功', data: AvatarArr })
     } catch (error) {
         return res.send({ code: 500, message: '服务器异常' })
     }
+}
 
+// 使用QuickPan提供的头像
+exports.SetQuickPanAvatar = async (req, res) => {
+    // 提取token
+    const token = req.headers.token
+    const user = verifyToken(token);
+    const avatar = req.query.avatar
+    const setAvatarSql = 'update cloud_userinfo set avatar = ? where userId = ?'
+    try {
+        const resSql = query(setAvatarSql, [avatar, user.userId])
+        res.send({ code: 200, message: '成功' })
+    } catch (error) {
+        return res.send({ code: 500, message: '服务器异常' })
+    }
 }
