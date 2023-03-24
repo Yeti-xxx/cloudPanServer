@@ -30,7 +30,7 @@ routerTest.post('/upload', multipartMiddleware, async (req, res) => {
         const chunkFile = req.files.chunk
         const chunkName = chunkFile.path.split('/').pop()
         renameFile(uploadChunkPath, chunkName, `${name}-${index}-${token}`)
-        res.send('upload chunk success')
+        res.send({code:'200',index})
     } else {
         res.send('error')
     }
