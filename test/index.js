@@ -30,7 +30,7 @@ routerTest.post('/upload', multipartMiddleware, async (req, res) => {
         const chunkFile = req.files.chunk
         const chunkName = chunkFile.path.split('/').pop()
         renameFile(uploadChunkPath, chunkName, `${name}-${index}-${token}`)
-        res.send({code:'200',index})
+        res.send({ code: '200', index })
     } else {
         res.send('error')
     }
@@ -39,6 +39,8 @@ routerTest.post('/upload', multipartMiddleware, async (req, res) => {
 })
 // 合并块函数
 const mergeChunkFile = async (fileName, chunkPath, chunkCount, fileToken, dataDir = "./") => {
+
+    console.log(fileToken);
     //如果chunkPath 不存在 则直接结束
     if (!fs.existsSync(chunkPath)) return
     const dataPath = path.join(uploadChunkPath, fileName); //路径拼接
@@ -46,6 +48,9 @@ const mergeChunkFile = async (fileName, chunkPath, chunkCount, fileToken, dataDi
     let writeStream = fs.createWriteStream(dataPath);   //创建Stream流
     let mergedChunkNum = 0
     return mergeCore()
+
+    console.log(error);
+
     //闭包保存非递归数据
     function mergeCore() {
         //结束标志为已合并数量大于总数（mergedChunkNum从0开始）
@@ -53,7 +58,7 @@ const mergeChunkFile = async (fileName, chunkPath, chunkCount, fileToken, dataDi
             // const overFile = fs.createReadStream(path.join(__dirname, "./", fileName))
             // const nono = fs.createWriteStream(path.join(uploadChunkPath, fileName))
             // overFile.pipe(nono) //完成后移动文件
-            return  writeStream.end()
+            return writeStream.end()
         }
         const curChunk = path.resolve(chunkPath, `${fileName}-${mergedChunkNum}-${fileToken}`)
         const curChunkReadStream = fs.createReadStream(curChunk)    //创建读取流
