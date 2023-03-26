@@ -26,7 +26,8 @@ routerTest.post('/upload', multipartMiddleware, async (req, res) => {
         await mergeChunkFile(fileName, uploadChunkPath, chunkCount, token)
         res.send('ok')
     } else if (req.body.type === 'upload') {
-        const { index, token, name } = req.body
+        const { index, token, name, totalLength } = req.body
+        console.log(totalLength);
         const chunkFile = req.files.chunk
         const chunkName = chunkFile.path.split('/').pop()
         renameFile(uploadChunkPath, chunkName, `${name}-${index}-${token}`)
@@ -39,7 +40,6 @@ routerTest.post('/upload', multipartMiddleware, async (req, res) => {
 })
 // 合并块函数
 const mergeChunkFile = async (fileName, chunkPath, chunkCount, fileToken, dataDir = "./") => {
-
     console.log(fileToken);
     //如果chunkPath 不存在 则直接结束
     if (!fs.existsSync(chunkPath)) return
