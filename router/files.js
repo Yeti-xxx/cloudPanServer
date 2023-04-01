@@ -6,5 +6,6 @@ const multipart = require('connect-multiparty');
 const multipartMiddleware = multipart();
 
 filesRouter.post('/uploadFiles',multipartMiddleware,filesHandler.uploadFiles)
+filesRouter.post('/verifyFile',filesHandler.verifyFile)
 
 module.exports = filesRouter
