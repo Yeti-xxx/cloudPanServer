@@ -102,14 +102,17 @@ exports.uploadFiles = async (req, res) => {
         try {
             // 解构参数
             const { fileName, chunkCount, Filetype } = req.body
-            // 获取目录和进度数组
+            // // 获取目录和进度数组
             const getSaveSql = 'select currentChunk,path,created_at from cloud_files where userId = ? and fileName = ? and type = ?'
             const getSaveRes = await query(getSaveSql, [user.userId, fileName, Filetype])
             const dir = getSaveRes[0].path  //获取目录
             const fileToken = getSaveRes[0].created_at
             await filesDeploy.mergeChunkFile(fileName, dir, chunkCount, fileToken)
+            const updateOverSql = 'update cloud_files set isUploadOver = ? where userId = ? and fileName = ? and type = ?'
+            const updateOverRes = await query(updateOverSql, [0, user.userId, fileName, Filetype])
             return res.send({ code: 200, message: 'merge ok' })
         } catch (error) {
+            console.log(error);
             return res.send({ code: 500, message: error.message })
         }
     }
@@ -126,7 +129,6 @@ exports.verifyFile = async (req, res) => {
         tokenStr = req.headers.token
         user = verifyToken(tokenStr);
         const { FileType, FileName } = req.body
-        console.log(FileType, FileName);
         // 获取目录和进度数组
         const getSaveSql = 'select totalChunk,currentChunk,path,created_at from cloud_files where userId = ? and fileName = ? and type = ?'
         const getSaveRes = await query(getSaveSql, [user.userId, FileName, FileType])
@@ -152,7 +154,7 @@ function fillArray(n) {
     return arr; // 返回填充的数组
 }
 
-// 数组差集
+// 数组对比并过滤存在的元素
 function difference(chunkArray, totalChunkArray) {
     console.log(chunkArray);
     console.log(totalChunkArray);
@@ -164,4 +166,23 @@ function difference(chunkArray, totalChunkArray) {
     }, [])
     console.log(diff);
     return diff
+}
+
+// 获取用户所有的文件资源信息
+exports.getFiles = async (req, res) => {
+    try {
+        let tokenStr = null
+        let user = null
+        tokenStr = req.headers.token
+        user = verifyToken(tokenStr);
+        console.log(user);
+        const getFilesSql = 'select * from cloud_files where userId = ?'
+        const getFilesRes = await query(getFilesSql, [user.userId])
+        res.send({ code: 200, message: 'getFiles ok', data: { FilesInfo: getFilesRes } })
+    } catch (error) {
+        console.log(error.message); 
+        res.send({ code: 401, message: '请重新登录！' })
+    }
+
+
 }

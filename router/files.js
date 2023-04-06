@@ -7,5 +7,6 @@ const multipartMiddleware = multipart();
 
 filesRouter.post('/uploadFiles',multipartMiddleware,filesHandler.uploadFiles)
 filesRouter.post('/verifyFile',filesHandler.verifyFile)
+filesRouter.get('/getFiles',filesHandler.getFiles)
 
 module.exports = filesRouter

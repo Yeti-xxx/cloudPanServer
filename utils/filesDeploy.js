@@ -34,6 +34,7 @@ exports.mergeChunkFile = async (fileName, chunkPath, chunkCount, fileToken) => {
 
     // 递归一下
     function mergeCore() {
+        console.log(fileName);
         // 结束标志就是已合并数量大于总数
         if (mergedChunkNum >= chunkCount) {
             return ws.end() //关闭流
