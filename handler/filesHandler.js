@@ -134,7 +134,7 @@ exports.verifyFile = async (req, res) => {
         const getSaveRes = await query(getSaveSql, [user.userId, FileName, FileType])
         const chunkArray = getSaveRes[0].currentChunk.split(',')
         chunkArray.shift()
-        const totalChunk = getSaveRes[0].totalChunk     //获取总数量
+        const totalChunk = getSaveRes[0].totalChunk-1     //获取总数量
         const totalChunkArray = fillArray(totalChunk)   //填充完整的数组
         const resArray = difference(chunkArray, totalChunkArray)
         return res.send({ code: 200, message: 'verifyFile ok', data: { resArray } })
